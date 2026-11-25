@@ -7,15 +7,18 @@
   <meta name="description" content="Log miles, hours, earnings, and expenses on this device.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
   <title>MileQuill Lite</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./assets/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="./assets/touch.png">
   <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./app.js"></script>
+  
+<link rel="stylesheet" href="./terms.css"><script type="module" src="./terms-entry.mjs"></script>
 </head>
 <body>
+<p id="terms-loading">Opening Terms of Service…</p><noscript>Enable JavaScript to open this app.</noscript>
+<template id="application-template" data-entry="./app.js">
   <a class="skip" href="#main">Skip to content</a>
   <header class="topbar">
     <div class="topbar-inner">
@@ -181,5 +184,6 @@
       </div>
     </form>
   </dialog>
+</template>
 </body>
 </html>
