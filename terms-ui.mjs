@@ -10,12 +10,15 @@ dialog.innerHTML = `<div class="terms-frame">
   <div class="terms-title"><strong>Early Development</strong> · <a class="privacy-link" href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a><h1 id="terms-heading" tabindex="-1"></h1></div>
   <div class="terms-scroll" tabindex="0" role="region" aria-label="Development notice and full Terms of Service">
     <p class="terms-development"></p><p class="terms-use"></p><p class="terms-feedback"></p><p>When reporting a problem, describe the steps using sample data. Omit private records, passwords, backups and screenshots containing personal information.</p>
-    <p class="terms-review"><strong>Draft for publisher review</strong></p><article aria-label="Agreement text"></article>
+    <p class="terms-license">Acceptance applies to this official build or service. It does not limit rights granted by the MIT source-code license or any separate component license.</p><article aria-label="Agreement text"></article>
   </div>
   <div class="terms-foot"><p class="terms-error" role="alert"></p><button type="button"></button></div>
 </div>`;
 const title = dialog.querySelector('h1');
 const button = dialog.querySelector('button');
+const decline = document.createElement('button');
+decline.type = 'button'; decline.textContent = 'Decline';
+dialog.querySelector('.terms-foot').append(decline);
 const error = dialog.querySelector('.terms-error');
 dialog.querySelector('.terms-development').textContent = developmentNotice;
 dialog.querySelector('.terms-use').textContent = realRecords;
@@ -28,7 +31,6 @@ for (const label of ['Report a Bug', 'Request a Feature']) {
 }
 export function displayDocument(doc) {
   bar.hidden = false;
-  dialog.querySelector('.terms-review').hidden = doc.status !== 'draft';
   dialog.querySelector('article').replaceChildren();
   for (const [index, paragraph] of doc.text.trim().split(/\n\s*\n/).entries()) {
     const heading = index === 0 || (index > 1 && paragraph.length < 80 && !/[.!?]$/.test(paragraph));
@@ -54,10 +56,12 @@ export function showTerms(save, message = '') {
   error.textContent = message;
   button.disabled = false;
   button.textContent = required ? 'I agree to the Terms of Service' : 'Close';
+  decline.hidden = !required;
   if (!dialog.open) dialog.showModal();
   dialog.querySelector('.terms-scroll').scrollTop = 0;
   title.focus();
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
+    decline.onclick = () => { required = false; dialog.close(); reject(new Error('You declined the terms. Your data has not been changed. Reload to review the agreement again.')); };
     button.onclick = async () => {
       button.disabled = true;
       try {

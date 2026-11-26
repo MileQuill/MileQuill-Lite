@@ -1,4 +1,5 @@
 import { appId, currentTerms } from './terms.mjs';
+import { agreementHash, receiptKey, hasAgreement } from './consent.mjs';
 import { showTerms, displayDocument } from './terms-ui.mjs';
 
 const receipt = 'agreed';
@@ -13,10 +14,11 @@ function accepted(key) {
 
 async function check() {
   const doc = await currentTerms();
-  const key = appId + ':terms:' + doc.version;
+  const digest = await agreementHash(doc.text);
+  const key = receiptKey(appId, doc.version, digest);
   if (activeKey !== key) displayDocument(doc);
   activeKey = key;
-  if (accepted(key)) return;
+  if (hasAgreement(localStorage, appId, doc.version, digest)) return;
   await showTerms(() => {
     try {
       localStorage.setItem(key, receipt);
